@@ -16,8 +16,9 @@ interface ListaProps {
 }
 
 const Lista = (props: ListaProps) => {
+	
 	return (
-		<div>
+		<div>						
 			{props.professores.length > 0 ? (
 				<ListaStyled>
 					{props.professores.map((professor) => (						
@@ -25,7 +26,7 @@ const Lista = (props: ListaProps) => {
 							<Foto src={professor.foto} />
 							<Informacoes>
 								<Nome>{professor.nome}</Nome>
-								<Valor>{professor.valor_hora.toLocaleString('pr-BR',{minimumFractionDigits: 2, style:'currency', currency:'BRL'})}por hora</Valor>
+								<Valor>{professor.valor_hora.toLocaleString('pr-BR',{minimumFractionDigits: 2, style:'currency', currency:'BRL'})} por hora</Valor>
 								<Descricao>{professor.descricao}</Descricao>
 								<Button sx={{ width: "70%" }}>Marcar Aula</Button>
 							</Informacoes>
