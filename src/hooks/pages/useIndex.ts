@@ -1,39 +1,61 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ApiService } from '../../services/ApiService';
 import { Professor } from './../../@types/Professor';
 
-export function useIndex(){
-    const[listaProfessores, setListaProfessores] = useState<Professor[]>([
-        {
-            id:1,
-            nome: "Henrique",
-            foto:"https://github.com/rickcunha05.png",
-            descricao: "Descrição do professor 1",
-            valor_hora: 100
-        },
-        {
-            id:2,
-            nome: "professor1",
-            foto:"https://github.com/rickcunha05.png",
-            descricao: "Descrição do professor 2",
-            valor_hora: 200
-        },
-        {
-            id:3,
-            nome: "professor2",
-            foto:"https://github.com/rickcunha05.png",
-            descricao: "Descrição do professor 3",
-            valor_hora: 500
-        },
-        {
-            id:4,
-            nome: "professor3",
-            foto:"https://github.com/rickcunha05.png",
-            descricao: "Descrição do professor 4",
-            valor_hora: 400
-        },
+export function useIndex() {
+    const [listaProfessores, setListaProfessores] = useState<Professor[]>([
+
     ]);
-    
+    const [nome, setNome] = useState('');
+    const [email, setEmail] = useState('');
+    const [professorSelecionado, setProfessorSelecionado] = useState<Professor | null>(null)
+    const [mensagem, setMensagem] = useState('');
+    useEffect(() => {
+        ApiService.get('/professores').then((resposta) => {
+            setListaProfessores(resposta.data)
+        })
+    }, []),
+    useEffect(() => {
+        limparFormulario();        
+    }, [professorSelecionado])
+
+    function marcarAula() {
+        if (professorSelecionado !== null) {
+            if (validarDadosAula()) {
+                ApiService.post('/professores/' + professorSelecionado.id + 'aulas', {
+                    nome, email
+                }).then(() => {
+                    setProfessorSelecionado(null);
+                    setMensagem('cadastrado com sucesso');
+                }).catch((error) => {
+                    setMensagem(error.response?.data.message)
+                });
+            } else{
+                setMensagem('Preencha os dados corretamente');
+            }
+
+        }
+
+    }
+
+    function validarDadosAula() {
+        return nome.length > 0 && email.length;
+    }
+    function limparFormulario(){
+        setNome('')
+        setEmail('')
+    }
+
     return {
-        listaProfessores
+        listaProfessores,
+        nome,
+        setNome,
+        email,
+        setEmail,
+        professorSelecionado,
+        setProfessorSelecionado,
+        marcarAula,
+        mensagem,
+        setMensagem
     }
 }
